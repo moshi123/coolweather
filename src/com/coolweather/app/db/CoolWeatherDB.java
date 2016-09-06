@@ -52,6 +52,25 @@ public class CoolWeatherDB {
 		}
 		}
 		/**
+		* 从数据库读取全国所有的省份信息。
+		*/
+		public List<Province> loadProvinces() {
+		List<Province> list = new ArrayList<Province>();
+		Cursor cursor = db
+		.query("Province", null, null, null, null, null, null);
+		if (cursor.moveToFirst()) {
+		do {
+		Province province = new Province();
+		province.setId(cursor.getInt(cursor.getColumnIndex("id")));
+		province.setProvinceName(cursor.getString(cursor
+		.getColumnIndex("province_name")));
+		province.setProvinceCode(cursor.getString(cursor.getColumnIndex("province_code")));
+		list.add(province);
+		} while (cursor.moveToNext());
+		}
+		return list;
+		}
+		/**
 		* 从数据库读取某省下所有的城市信息。
 		*/
 		public List<City> loadCities(int provinceId) {
@@ -72,6 +91,19 @@ public class CoolWeatherDB {
 		}
 		return list;
 		}
+		/**
+		* 将City实例存储到数据库。
+		*/
+		public void saveCity(City city) {
+		if (city != null) {
+		ContentValues values = new ContentValues();
+		values.put("city_name", city.getCityName());
+		values.put("city_code", city.getCityCode());
+		values.put("province_id", city.getProvinceId());
+		db.insert("City", null, values);
+		}
+		}
+	
 		/**
 		* 将County实例存储到数据库。
 		*/
@@ -105,5 +137,6 @@ public class CoolWeatherDB {
 		}
 		return list;
 		}
+	
 		
 }
